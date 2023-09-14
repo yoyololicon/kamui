@@ -20,12 +20,12 @@ def integrate(edges: np.ndarray, weights: np.ndarray, start_i: int = 0):
     N = max(G.shape)
     result = np.zeros(N, dtype=weights.dtype)
 
-    nodes = csg.breadth_first_order(
-        G, start_i, directed=True, return_predecessors=False
-    )
+    nodes = csg.depth_first_order(G, start_i, directed=True, return_predecessors=False)
+
     pairs = np.stack([nodes[:-1], nodes[1:]], axis=1)
     for u, v in pairs:
         result[v] = result[u] + G[u, v]
+
     return result
 
 
@@ -88,8 +88,12 @@ def calculate_k(
 
     if weights is None:
         if adaptive_weighting:
-            c = np.abs(A_eq).T @ np.abs(b_eq)
-            c = (c == 0).astype(np.int64)
+            nonzero_simplices = np.minimum(np.abs(b_eq), 1)
+            W = np.abs(A_eq)
+            affected_edges = nonzero_simplices @ W
+            num_simplices = W.sum(0).A1
+            # c = (affected_edges < num_simplices).astype(np.int64)
+            c = num_simplices - affected_edges
         else:
             c = np.ones((M * 2,), dtype=np.int64)
     else:
