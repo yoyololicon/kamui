@@ -92,7 +92,6 @@ def calculate_k(
             W = np.abs(A_eq)
             affected_edges = nonzero_simplices @ W
             num_simplices = W.sum(0).A1
-            # c = (affected_edges < num_simplices).astype(np.int64)
             c = num_simplices - affected_edges
         else:
             c = np.ones((M * 2,), dtype=np.int64)

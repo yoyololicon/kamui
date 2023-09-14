@@ -57,7 +57,7 @@ def unwrap_dimensional(
 def unwrap_arbitrary(
     psi: np.ndarray,
     edges: np.ndarray,
-    simplices: np.ndarray,
+    simplices: Iterable[Iterable[int]],
     period: float = 2 * np.pi,
     start_i: int = 0,
     **kwargs,
