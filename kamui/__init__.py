@@ -17,10 +17,10 @@ def wrap_difference(x: np.ndarray, wrapped_interval: float = 2 * np.pi) -> np.nd
     return np.mod(x + wrapped_interval / 2, wrapped_interval) - wrapped_interval / 2
 
 
-def unwrap(
+def unwrap_dimensional(
     x: np.ndarray,
-    wrapped_interval: float = 2 * np.pi,
     start_pixel: Optional[Union[Tuple[int, int], Tuple[int, int, int]]] = None,
+    **kwargs,
 ) -> np.ndarray:
     """
     Unwrap a 2D or 3D array.
@@ -46,16 +46,36 @@ def unwrap(
     else:
         raise ValueError("x must be 2D or 3D")
     psi = x.ravel()
+
+    result = unwrap_arbitrary(psi, edges, simplices, start_i=start_i, **kwargs)
+    if result is None:
+        return None
+
+    return result.reshape(x.shape)
+
+
+def unwrap_arbitrary(
+    psi: np.ndarray,
+    edges: np.ndarray,
+    simplices: np.ndarray,
+    wrapped_interval: float = 2 * np.pi,
+    start_i: int = 0,
+    **kwargs,
+) -> Optional[np.ndarray]:
     diff = wrap_difference(psi[edges[:, 1]] - psi[edges[:, 0]], wrapped_interval)
-    k = calculate_k(edges, simplices, diff / wrapped_interval)
+    k = calculate_k(edges, simplices, diff / wrapped_interval, **kwargs)
+
+    if k is None:
+        return None
     correct_diff = diff + k * wrapped_interval
-    start_i = start_pixel[0] * x.shape[1] + start_pixel[1]
+
+
     result = (
         integrate(
-            np.concatenate((edges, edges[:, ::-1]), axis=0),
+            np.concatenate((edges, np.flip(edges, 1)), axis=0),
             np.concatenate((correct_diff, -correct_diff), axis=0),
             start_i=start_i,
         )
         + psi[start_i]
     )
-    return result.reshape(x.shape)
+    return result
