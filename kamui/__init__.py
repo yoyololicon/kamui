@@ -5,16 +5,16 @@ from .core import *
 from .utils import *
 
 
-def wrap_difference(x: np.ndarray, wrapped_interval: float = 2 * np.pi) -> np.ndarray:
+def wrap_difference(x: np.ndarray, period: float = 2 * np.pi) -> np.ndarray:
     """
     Wrap a 1D array.
     Args:
         x: (N,) array
-        wrapped_interval: interval of the wrapped axis
+        period: interval of the wrapped axis
     Returns:
         (N,) array
     """
-    return np.mod(x + wrapped_interval / 2, wrapped_interval) - wrapped_interval / 2
+    return np.mod(x + period / 2, period) - period / 2
 
 
 def unwrap_dimensional(
@@ -26,7 +26,7 @@ def unwrap_dimensional(
     Unwrap a 2D or 3D array.
     Args:
         x: (N, M) or (N, M, L) array
-        wrapped_interval: interval of the wrapped axis
+        period: interval of the wrapped axis
     Returns:
         (N, M) or (N, M, L) array
     """
@@ -58,17 +58,27 @@ def unwrap_arbitrary(
     psi: np.ndarray,
     edges: np.ndarray,
     simplices: np.ndarray,
-    wrapped_interval: float = 2 * np.pi,
+    period: float = 2 * np.pi,
     start_i: int = 0,
     **kwargs,
 ) -> Optional[np.ndarray]:
-    diff = wrap_difference(psi[edges[:, 1]] - psi[edges[:, 0]], wrapped_interval)
-    k = calculate_k(edges, simplices, diff / wrapped_interval, **kwargs)
+    """
+    Unwrap an arbitrary array.
+    Args:
+        psi: (N,) array
+        edges: (M, 2) array of edges
+        simplices: (N,) iterable of simplices
+        period: interval of the wrapped axis
+        start_i: starting index
+    Returns:
+        (N,) array
+    """
+    diff = wrap_difference(psi[edges[:, 1]] - psi[edges[:, 0]], period)
+    k = calculate_k(edges, simplices, diff / period, **kwargs)
 
     if k is None:
         return None
-    correct_diff = diff + k * wrapped_interval
-
+    correct_diff = diff + k * period
 
     result = (
         integrate(
