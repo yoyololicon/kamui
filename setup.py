@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="kamui",
-    version="0.0.1",
+    version="0.1",
     author="Chin-Yun Yu",
     author_email="chin-yun.yu@qmul.ac.uk",
     description="A Python package for unwrapping phase",
@@ -14,6 +14,9 @@ setuptools.setup(
     url="https://github.com/yoyololicon/kamui",
     packages=["kamui"],
     install_requires=["numpy", "scipy"],
+    extras_require={
+        "extra": ["PyMaxflow"],
+    },
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: Apache License 2.0",

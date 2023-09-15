@@ -4,7 +4,12 @@ from scipy.optimize import linprog
 import numpy as np
 from typing import Optional, Iterable
 
-__all__ = ["integrate", "calculate_k", "calculate_m"]
+try:
+    import maxflow
+except ImportError:
+    print("PyMaxflow not found, some functions will not be available.")
+
+__all__ = ["integrate", "calculate_k", "calculate_m", "puma"]
 
 
 def integrate(edges: np.ndarray, weights: np.ndarray, start_i: int = 0):
@@ -151,3 +156,76 @@ def calculate_m(
         return None
     m = res.x[:N]
     return m.astype(np.int64)
+
+
+def puma(psi: np.ndarray, edges: np.ndarray, max_jump: int = 1, p: float = 1):
+    """
+    Args:
+        psi: (N,) array
+        edges: (M, 2) array of edges
+        max_jump: maximum jump step
+        p: p-norm
+    Returns:
+        (N,) array
+    """
+    if max_jump > 1:
+        jump_steps = list(range(1, max_jump + 1)) * 2
+    else:
+        jump_steps = [max_jump]
+
+    total_nodes = psi.size
+
+    def V(x):
+        return np.abs(x) ** p
+
+    K = np.zeros_like(psi)
+
+    def cal_Ek(K, psi, i, j):
+        return np.sum(V(K[j] - K[i] - psi[i] + psi[j]))
+
+    prev_Ek = cal_Ek(K, psi, edges[:, 0], edges[:, 1])
+
+    energy_list = []
+
+    for step in jump_steps:
+        while 1:
+            energy_list.append(prev_Ek)
+            G = maxflow.Graph[float]()
+            G.add_nodes(total_nodes)
+
+            i, j = edges[:, 0], edges[:, 1]
+            psi_diff = psi[i] - psi[j]
+            a = (K[j] - K[i]) - psi_diff
+            e00 = e11 = V(a)
+            e01 = V(a - step)
+            e10 = V(a + step)
+            weight = np.maximum(0, e10 + e01 - e00 - e11)
+
+            G.add_edges(edges[:, 0], edges[:, 1], weight, np.zeros_like(weight))
+
+            tmp_st_weight = np.zeros((2, total_nodes))
+
+            for i in range(edges.shape[0]):
+                u, v = edges[i]
+                tmp_st_weight[0, u] += max(0, e10[i] - e00[i])
+                tmp_st_weight[0, v] += max(0, e11[i] - e10[i])
+                tmp_st_weight[1, u] -= min(0, e10[i] - e00[i])
+                tmp_st_weight[1, v] -= min(0, e11[i] - e10[i])
+
+            for i in range(total_nodes):
+                G.add_tedge(i, tmp_st_weight[0, i], tmp_st_weight[1, i])
+
+            G.maxflow()
+
+            partition = G.get_grid_segments(np.arange(total_nodes))
+            K[~partition] += step
+
+            energy = cal_Ek(K, psi, edges[:, 0], edges[:, 1])
+
+            if energy < prev_Ek:
+                prev_Ek = energy
+            else:
+                K[~partition] -= step
+                break
+
+    return K

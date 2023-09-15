@@ -66,6 +66,7 @@ def unwrap_arbitrary(
     psi: np.ndarray,
     edges: np.ndarray,
     simplices: Iterable[Iterable[int]] = None,
+    method: str = "ilp",
     period: float = 2 * np.pi,
     start_i: int = 0,
     **kwargs,
@@ -81,27 +82,36 @@ def unwrap_arbitrary(
     Returns:
         (N,) array
     """
-    if simplices is None:
-        m = calculate_m(
-            edges,
-            np.round((psi[edges[:, 1]] - psi[edges[:, 0]]) / period).astype(np.int64),
-            **kwargs,
-        )
-        if m is None:
-            return None
+    if method == "gc":
+        m = puma(psi / period, edges, **kwargs)
         m -= m[start_i]
         result = m * period + psi
-    else:
-        diff = wrap_difference(psi[edges[:, 1]] - psi[edges[:, 0]], period)
-        k = calculate_k(edges, simplices, diff / period, **kwargs)
-        correct_diff = diff + k * period
-
-        result = (
-            integrate(
-                np.concatenate((edges, np.flip(edges, 1)), axis=0),
-                np.concatenate((correct_diff, -correct_diff), axis=0),
-                start_i=start_i,
+    elif method == "ilp":
+        if simplices is None:
+            m = calculate_m(
+                edges,
+                np.round((psi[edges[:, 1]] - psi[edges[:, 0]]) / period).astype(
+                    np.int64
+                ),
+                **kwargs,
             )
-            + psi[start_i]
-        )
+            if m is None:
+                return None
+            m -= m[start_i]
+            result = m * period + psi
+        else:
+            diff = wrap_difference(psi[edges[:, 1]] - psi[edges[:, 0]], period)
+            k = calculate_k(edges, simplices, diff / period, **kwargs)
+            correct_diff = diff + k * period
+
+            result = (
+                integrate(
+                    np.concatenate((edges, np.flip(edges, 1)), axis=0),
+                    np.concatenate((correct_diff, -correct_diff), axis=0),
+                    start_i=start_i,
+                )
+                + psi[start_i]
+            )
+    else:
+        raise ValueError("method must be 'gc' or 'ilp'")
     return result
