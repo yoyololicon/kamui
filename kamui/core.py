@@ -116,7 +116,7 @@ def calculate_m(
     """
     Args:
         edges: (M, 2) array of edges
-        differences: (M,) array of differences, must be int
+        differences: (M,) quantised array of differences, must be int
         weights: (M,) array of weights
     """
     assert differences.dtype == np.int64, "differences must be int"
@@ -131,24 +131,24 @@ def calculate_m(
 
     A_eq = sp.csr_matrix(
         (
-            np.concatenate((vals, -vals, np.ones(M), -np.ones(M))).astype(np.int64),
+            np.concatenate((vals, np.ones(M), -np.ones(M))).astype(np.int64),
             (
-                np.tile(rows, 3),
-                np.concatenate((cols, cols + N, np.arange(2 * M) + 2 * N)),
+                np.tile(rows, 2),
+                np.concatenate((cols, np.arange(2 * M) + N)),
             ),
         ),
-        shape=(M, 2 * N + 2 * M),
+        shape=(M, N + 2 * M),
     )
     if weights is None:
         weights = np.ones((M,), dtype=np.int64)
 
-    c = np.concatenate((np.zeros(2 * N, dtype=np.int64), weights, weights))
+    c = np.concatenate((np.zeros(N, dtype=np.int64), weights, weights))
 
     b_eq = differences
 
     res = linprog(c, A_eq=A_eq, b_eq=b_eq, integrality=1)
     if res.x is None:
         return None
-    m = res.x[:N] - res.x[N : 2 * N]
+    m = res.x[:N]  # - res.x[N : 2 * N]
     m = m.astype(np.int64)
     return m
