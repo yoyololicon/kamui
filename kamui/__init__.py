@@ -25,6 +25,7 @@ def wrap_difference(x: np.ndarray, period: float = 2 * np.pi) -> np.ndarray:
 def unwrap_dimensional(
     x: np.ndarray,
     start_pixel: Optional[Union[Tuple[int, int], Tuple[int, int, int]]] = None,
+    use_edgelist: bool = False,
     **kwargs,
 ) -> np.ndarray:
     """
@@ -52,7 +53,9 @@ def unwrap_dimensional(
         raise ValueError("x must be 2D or 3D")
     psi = x.ravel()
 
-    result = unwrap_arbitrary(psi, edges, simplices, start_i=start_i, **kwargs)
+    result = unwrap_arbitrary(
+        psi, edges, None if use_edgelist else simplices, start_i=start_i, **kwargs
+    )
     if result is None:
         return None
 
@@ -72,7 +75,7 @@ def unwrap_arbitrary(
     Args:
         psi: (N,) array
         edges: (M, 2) array of edges
-        simplices: (N,) iterable of simplices
+        simplices: (N,) iterable of simplices. If not given, the edgelist method is used, which is much slower than the ilp method.
         period: interval of the wrapped axis
         start_i: starting index
     Returns:

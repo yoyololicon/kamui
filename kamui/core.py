@@ -149,6 +149,5 @@ def calculate_m(
     res = linprog(c, A_eq=A_eq, b_eq=b_eq, integrality=1)
     if res.x is None:
         return None
-    m = res.x[:N]  # - res.x[N : 2 * N]
-    m = m.astype(np.int64)
-    return m
+    m = res.x[:N]
+    return m.astype(np.int64)
