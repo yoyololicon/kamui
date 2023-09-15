@@ -4,7 +4,7 @@ from scipy.optimize import linprog
 import numpy as np
 from typing import Optional, Iterable
 
-__all__ = ["integrate", "calculate_k"]
+__all__ = ["integrate", "calculate_k", "calculate_m"]
 
 
 def integrate(edges: np.ndarray, weights: np.ndarray, start_i: int = 0):
@@ -90,9 +90,9 @@ def calculate_k(
         if adaptive_weighting:
             nonzero_simplices = np.minimum(np.abs(b_eq), 1)
             W = np.abs(A_eq)
-            affected_edges = nonzero_simplices @ W
+            num_nonzero_simplices = nonzero_simplices @ W
             num_simplices = W.sum(0).A1
-            c = num_simplices - affected_edges
+            c = num_simplices - num_nonzero_simplices
         else:
             c = np.ones((M * 2,), dtype=np.int64)
     else:
@@ -106,3 +106,49 @@ def calculate_k(
         print(f"Warning: no solution found.")
         return None
     return k
+
+
+def calculate_m(
+    edges: np.ndarray,
+    differences: np.ndarray,
+    weights: Optional[np.ndarray] = None,
+) -> Optional[np.ndarray]:
+    """
+    Args:
+        edges: (M, 2) array of edges
+        differences: (M,) array of differences, must be int
+        weights: (M,) array of weights
+    """
+    assert differences.dtype == np.int64, "differences must be int"
+    M = edges.shape[0]
+    N = np.max(edges) + 1
+
+    vals = np.concatenate(
+        (np.ones((M,), dtype=np.int64), -np.ones((M,), dtype=np.int64))
+    )
+    rows = np.tile(np.arange(M), 2)
+    cols = np.concatenate((edges[:, 0], edges[:, 1]))
+
+    A_eq = sp.csr_matrix(
+        (
+            np.concatenate((vals, -vals, np.ones(M), -np.ones(M))).astype(np.int64),
+            (
+                np.tile(rows, 3),
+                np.concatenate((cols, cols + N, np.arange(2 * M) + 2 * N)),
+            ),
+        ),
+        shape=(M, 2 * N + 2 * M),
+    )
+    if weights is None:
+        weights = np.ones((M,), dtype=np.int64)
+
+    c = np.concatenate((np.zeros(2 * N, dtype=np.int64), weights, weights))
+
+    b_eq = differences
+
+    res = linprog(c, A_eq=A_eq, b_eq=b_eq, integrality=1)
+    if res.x is None:
+        return None
+    m = res.x[:N] - res.x[N : 2 * N]
+    m = m.astype(np.int64)
+    return m
