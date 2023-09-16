@@ -6,7 +6,7 @@
 
 Kamui is a python package for robust and accurate phase unwrapping on 2-D, 3-D, or sparse data. 
 
-Kamui unwrap the phases by viewing the data points as vertices $`V = \{v: v \in [0, 2\pi)\}`$ connected with edges $`E = \{(u, v): u, v\in V \cap u \neq v\}`$ and solving the following integer linear programming (ILP) problem:
+Kamui unwrap the phases by viewing the data points as vertices $V$ connected with edges $E$ and solving the following integer linear programming (ILP) problem:
 
 ```math
 \min_{k} w^T |k|,
@@ -15,8 +15,8 @@ Kamui unwrap the phases by viewing the data points as vertices $`V = \{v: v \in 
 ```math
 \text{s.t.} Ak = -A\frac{x}{2\pi},
 ```
-where $`k_{i \in [0, M)} \in \mathbb{Z}`$ is the edge ambiguities to be computed, $`w_{i \in [0, M)} \in \mathbb{R}^+`$ is the weights, $`x_i = \{(v - u + \pi) \pmod {2\pi} - \pi: (u, v) \in E\}_{i \in [0, M)}`$ is the pseudo phase derivatives, $`M = |E|`$. 
-$`A_{ij} \in \{-1, 0, 1\} \cap i \in [0, N), j \in [0, M)`$ and $N$ is the number of elementary cycles enclosed by $E$.
+where $`k_{i \in [0, M)} \in \mathbb{Z}`$ is the edge ambiguities to be computed, $`w_{i \in [0, M)} \in \mathbb{R}^+`$ is the weights, $`x_{i \in [0, M)} = (V_v - V_u + \pi) \pmod {2\pi} - \pi |  (u, v) = E_i`$ is the pseudo phase derivatives, $`M = |E|`$. 
+$`A_{ij} \in \{-1, 0, 1\} | i \in [0, N) \cap j \in [0, M)`$ and $N$ is the number of elementary cycles enclosed by $E$.
 
 This formulation is based on the fact that the true phase differences, $2\pi k + x$, should fulfill the irrotationality constraint, which means the summation of phase derivatives of each elementary cycles is zero.
 This is the general form of the network programming approach proposed in the paper "[A novel phase unwrapping method based on network programming](https://ieeexplore.ieee.org/document/673674)".
