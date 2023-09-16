@@ -29,12 +29,19 @@ def unwrap_dimensional(
     **kwargs,
 ) -> np.ndarray:
     """
-    Unwrap a 2D or 3D array.
-    Args:
-        x: (N, M) or (N, M, L) array
-        period: interval of the wrapped axis
-    Returns:
-        (N, M) or (N, M, L) array
+    Unwrap the phase of a 2-D or 3-D array.
+
+    Parameters
+    ----------
+    x : 2-D or 3-D np.ndarray
+        The phase to be unwrapped.
+    start_pixel : the reference pixel to start unwrapping.
+        Default to (0, 0) for 2-D data and (0, 0, 0) for 3-D data.
+    use_edgelist : bool
+        Whether to use the edgelist method.
+        Default to False.
+    kwargs : dict
+        Other arguments passed to `kamui.unwrap_arbitrary`.
     """
     if start_pixel is None:
         start_pixel = (0,) * x.ndim
@@ -72,15 +79,30 @@ def unwrap_arbitrary(
     **kwargs,
 ) -> Optional[np.ndarray]:
     """
-    Unwrap an arbitrary array.
-    Args:
-        psi: (N,) array
-        edges: (M, 2) array of edges
-        simplices: (N,) iterable of simplices. If not given, the edgelist method is used, which is much slower than the ilp method.
-        period: interval of the wrapped axis
-        start_i: starting index
-    Returns:
-        (N,) array
+    Unwrap the phase of arbitrary data.
+
+    Parameters
+    ----------
+    psi : 1D np.ndarray of shape (P,)
+        The phase (vertices) to be unwrapped.
+    edges : 2-D np.ndarray of shape (M, 2)
+        The edges of the graph.
+    simplices : Iterable[Iterable[int]] of length (N,)
+        Each element is a list of vertices that form a simplex (a.k.a elementary cycle).
+        The connections should be consistent with the edges.
+        This is also used to compute automatic weights for each edge.
+        If not provided and method is "ilp", an edgelist-based ILP solver will be used without weighting.
+    method : str
+        The method to be used. Valid options are "ilp" and "gc", where "gc" correponds to PUMA.
+        Default to "ilp".
+    period : float
+        The period of the phase.
+        Default to 2 * np.pi.
+    start_i : int
+        The index of the reference vertex to start unwrapping.
+        Default to 0.
+    kwargs : dict
+        Other arguments passed to the solver.
     """
     if method == "gc":
         m = puma(psi / period, edges, **kwargs)
