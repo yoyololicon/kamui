@@ -26,7 +26,7 @@ Acceleration techniques, such as dividing the graph into subgraphs, will be impl
 pip install kamui
 ```
 
-Kamui also provide [PUMA](https://ieeexplore.ieee.org/document/4099386), a fast and robust phase unwrapping algorithm based on graph cuts as an alternative.
+Kamui also provides [PUMA](https://ieeexplore.ieee.org/document/4099386), a fast and robust phase unwrapping algorithm based on graph cuts as an alternative.
 To install PUMA, run
 
 ```commandline
@@ -34,7 +34,7 @@ pip install kamui[extra]
 ```
 
 However, it uses the original maxflow implementation by Vladimir Kolmogorov with GPL license.
-Please follow the licensing instruction in [PyMaxFlow](http://pmneila.github.io/PyMaxflow/#indices-and-tables) if you use this version of kamui.
+Please follow the licensing instruction in [PyMaxflow](http://pmneila.github.io/PyMaxflow/#indices-and-tables) if you use this version of Kamui.
 
 
 ## Usage
@@ -47,9 +47,14 @@ WIP.
 ## TODO
 
 - [ ] subgraph division
+- [ ] vertices-based weighting
 
 
 ## References
 
+- scikit-image/scikit-image/#4622
+- [my medium blogpost](https://medium.com/@ILoveJK/%E7%9B%B8%E4%BD%8D%E9%87%8D%E5%BB%BA%E8%88%87%E5%9C%96%E5%AD%B8-phase-unwrapping-using-minimum-cost-network-flow-%E4%B8%89-b64732901f17)
 - [A novel phase unwrapping method based on network programming](https://ieeexplore.ieee.org/document/673674)
 - [Phase Unwrapping via Graph Cuts](https://ieeexplore.ieee.org/document/4099386)
+- [Edgelist phase unwrapping algorithm for time series InSAR analysis](https://opg.optica.org/josaa/abstract.cfm?uri=josaa-27-3-605)
+- [Time Series Phase Unwrapping Based on Graph Theory and Compressed Sensing](https://ieeexplore.ieee.org/document/9387451?arnumber=9387451)
