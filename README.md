@@ -1,4 +1,8 @@
 # Kamui
+[![Lint](https://github.com/yoyololicon/kamui/actions/workflows/black.yml/badge.svg)](https://github.com/yoyololicon/kamui/actions/workflows/black.yml)
+[![Upload Python Package](https://github.com/yoyololicon/kamui/actions/workflows/python-publish.yml/badge.svg)](https://github.com/yoyololicon/kamui/actions/workflows/python-publish.yml)
+[![PyPI version](https://badge.fury.io/py/kamui.svg)](https://badge.fury.io/py/kamui)
+
 
 Kamui is a python package for robust and accurate phase unwrapping on 2-D, 3-D, or sparse data. 
 
