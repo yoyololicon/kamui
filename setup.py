@@ -8,7 +8,7 @@ setuptools.setup(
     version="0.1",
     author="Chin-Yun Yu",
     author_email="chin-yun.yu@qmul.ac.uk",
-    description="A Python package for unwrapping phase",
+    description="A Python package for phase unwrapping",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/yoyololicon/kamui",
@@ -19,7 +19,7 @@ setuptools.setup(
     },
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: Apache License 2.0",
+        "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.6",
