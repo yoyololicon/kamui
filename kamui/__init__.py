@@ -35,7 +35,8 @@ def unwrap_dimensional(
     ----------
     x : 2-D or 3-D np.ndarray
         The phase to be unwrapped.
-    start_pixel : the reference pixel to start unwrapping.
+    start_pixel : (2,) or (3,) tuple
+        the reference pixel to start unwrapping.
         Default to (0, 0) for 2-D data and (0, 0, 0) for 3-D data.
     use_edgelist : bool
         Whether to use the edgelist method.
