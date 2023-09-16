@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="kamui",
-    version="0.1",
+    version="0.1.1.dev",
     author="Chin-Yun Yu",
     author_email="chin-yun.yu@qmul.ac.uk",
     description="A Python package for phase unwrapping",
