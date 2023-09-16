@@ -1,6 +1,6 @@
 # Kamui
 
-Kamui is a python package for robust and accurate phase unwrapping on 2D, 3D, or sparse data. 
+Kamui is a python package for robust and accurate phase unwrapping on 2-D, 3-D, or sparse data. 
 
 Kamui unwrap the phases by viewing the data points as vertices $`V = \{v: v \in [0, 2\pi)\}`$ connected with edges $`E = \{(u, v): u, v\in V \cap u \neq v\}`$ and solving the following integer linear programming (ILP) problem:
 
@@ -39,7 +39,7 @@ Please follow the licensing instruction in [PyMaxflow](http://pmneila.github.io/
 
 ## Usage
 
-For regular 2D or 3D data such as interferograms, use `kamui.unwrap_dimensional`:
+For regular 2-D or 3-D data such as interferograms, use `kamui.unwrap_dimensional`:
 
 ```python
 import numpy as np
@@ -51,14 +51,14 @@ def unwrap_dimensional(
     **kwargs
 ) -> np.ndarray:
     """
-    Unwrap the phase of a 2D or 3D array.
+    Unwrap the phase of a 2-D or 3-D array.
 
     Parameters
     ----------
-    x : 2D or 3D np.ndarray
+    x : 2-D or 3-D np.ndarray
         The phase to be unwrapped.
     start_pixel : the reference pixel to start unwrapping.
-        Default to (0, 0) for 2D data and (0, 0, 0) for 3D data.
+        Default to (0, 0) for 2-D data and (0, 0, 0) for 3-D data.
     use_edgelist : bool
         Whether to use the edgelist method.
         Default to False.
@@ -87,7 +87,7 @@ def unwrap_arbitrary(
     ----------
     psi : 1D np.ndarray of shape (P,)
         The phase (vertices) to be unwrapped. 
-    edges : 2D np.ndarray of shape (M, 2)
+    edges : 2-D np.ndarray of shape (M, 2)
         The edges of the graph.
     simplices : Iterable[Iterable[int]] of length (N,)
         Each element is a list of vertices that form a simplex (a.k.a elementary cycle).
