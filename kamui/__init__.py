@@ -42,6 +42,11 @@ def unwrap_dimensional(
         Default to False.
     kwargs : dict
         Other arguments passed to `kamui.unwrap_arbitrary`.
+
+    Returns
+    -------
+    np.ndarray
+        The unwrapped phase of the same shape as x.
     """
     if start_pixel is None:
         start_pixel = (0,) * x.ndim
@@ -103,6 +108,11 @@ def unwrap_arbitrary(
         Default to 0.
     kwargs : dict
         Other arguments passed to the solver.
+
+    Returns
+    -------
+    np.ndarray
+        The unwrapped phase of the same shape as psi.
     """
     if method == "gc":
         m = puma(psi / period, edges, **kwargs)
