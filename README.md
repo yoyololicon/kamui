@@ -64,6 +64,7 @@ def unwrap_dimensional(
         Default to False.
     kwargs : dict
         Other arguments passed to `kamui.unwrap_arbitrary`.
+    """
 ```
 
 For sparse data, use `kamui.unwrap_arbitrary`:
