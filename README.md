@@ -11,7 +11,7 @@ Kamui unwrap the phases by viewing the data points as vertices $`V = \{v: v \in 
 ```math
 \text{s.t.} Ak = -A\frac{x}{2\pi},
 ```
-where $`k_{i \in [0, M)} \in \mathbb{Z}`$ is the point ambiguities, $`w_{i \in [0, M)} \in \mathbb{R}^+`$ is the weights, $`x_i = \{(v - u + \pi) \pmod {2\pi} - \pi: (u, v) \in E\}_{i \in [0, M)}`$ is the pseudo phase derivatives, $`M = |E|`$. 
+where $`k_{i \in [0, M)} \in \mathbb{Z}`$ is the edge ambiguities to be computed, $`w_{i \in [0, M)} \in \mathbb{R}^+`$ is the weights, $`x_i = \{(v - u + \pi) \pmod {2\pi} - \pi: (u, v) \in E\}_{i \in [0, M)}`$ is the pseudo phase derivatives, $`M = |E|`$. 
 $`A_{ij} \in \{-1, 0, 1\} \cap i \in [0, N), j \in [0, M)`$ and $N$ is the number of elementary cycles enclosed by $E$.
 
 This formulation is based on the fact that the true phase differences, $2\pi k + x$, should fulfill the irrotationality constraint, which means the summation of phase derivatives of each elementary cycles is zero.
