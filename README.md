@@ -14,7 +14,7 @@ Kamui unwrap the phases by viewing the data points as vertices $`V = \{v: v \in 
 where $`k_{i \in [0, M)} \in \mathbb{Z}`$ is the point ambiguities, $`w_{i \in [0, M)} \in \mathbb{R}^+`$ is the weights, $`x_i = \{(v - u + \pi) \pmod {2\pi} - \pi: (u, v) \in E\}_{i \in [0, M)}`$ is the pseudo phase derivatives, $`M = |E|`$. 
 $`A_{ij} \in \{-1, 0, 1\} \cap i \in [0, N), j \in [0, M)`$ and $N$ is the number of elementary cycles enclosed by $E$.
 
-This formulation is based on the fact that the true phase differences, $2\pi k + x$, should fulfill the irrotationality constraint, which means the summation of phase derivatives of each elementary cycles is zeros.
+This formulation is based on the fact that the true phase differences, $2\pi k + x$, should fulfill the irrotationality constraint, which means the summation of phase derivatives of each elementary cycles is zero.
 This is the general form of the network programming approach proposed in the paper "[A novel phase unwrapping method based on network programming](https://ieeexplore.ieee.org/document/673674)".
 
 Unwrapping phase with Kamui can be computationally heavy due to the fact that ILP is NP-hard.
@@ -52,7 +52,7 @@ WIP.
 
 ## References
 
-- scikit-image/scikit-image/#4622
+- [scikit-image/scikit-image/#4622](https://github.com/scikit-image/scikit-image/issues/4622)
 - [my medium blogpost](https://medium.com/@ILoveJK/%E7%9B%B8%E4%BD%8D%E9%87%8D%E5%BB%BA%E8%88%87%E5%9C%96%E5%AD%B8-phase-unwrapping-using-minimum-cost-network-flow-%E4%B8%89-b64732901f17)
 - [A novel phase unwrapping method based on network programming](https://ieeexplore.ieee.org/document/673674)
 - [Phase Unwrapping via Graph Cuts](https://ieeexplore.ieee.org/document/4099386)
