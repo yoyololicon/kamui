@@ -39,16 +39,82 @@ Please follow the licensing instruction in [PyMaxflow](http://pmneila.github.io/
 
 ## Usage
 
-WIP.
+For regular 2D or 3D data such as interferograms, use `kamui.unwrap_dimensional`:
 
 ```python
+import numpy as np
+
+def unwrap_dimensional(
+    x: np.ndarray,
+    start_pixel: Optional[Union[Tuple[int, int], Tuple[int, int, int]]] = None,
+    use_edgelist: bool = False,
+    **kwargs
+) -> np.ndarray:
+    """
+    Unwrap the phase of a 2D or 3D array.
+
+    Parameters
+    ----------
+    x : 2D or 3D np.ndarray
+        The phase to be unwrapped.
+    start_pixel : the reference pixel to start unwrapping.
+        Default to (0, 0) for 2D data and (0, 0, 0) for 3D data.
+    use_edgelist : bool
+        Whether to use the edgelist method.
+        Default to False.
+    kwargs : dict
+        Other arguments passed to `kamui.unwrap_arbitrary`.
 ```
+
+For sparse data, use `kamui.unwrap_arbitrary`:
+
+```python
+import numpy as np
+
+def unwrap_arbitrary(
+    psi: np.ndarray,
+    edges: np.ndarray,
+    simplices: Iterable[Iterable[int]] = None,
+    method: str = "ilp",
+    period: float = 2 * np.pi,
+    start_i: int = 0,
+    **kwargs,
+) -> np.ndarray:
+    """
+    Unwrap the phase of arbitrary data.
+
+    Parameters
+    ----------
+    psi : 1D np.ndarray of shape (P,)
+        The phase (vertices) to be unwrapped. 
+    edges : 2D np.ndarray of shape (M, 2)
+        The edges of the graph.
+    simplices : Iterable[Iterable[int]] of length (N,)
+        Each element is a list of vertices that form a simplex (a.k.a elementary cycle).
+        The connections should be consistent with the edges.
+        If not provided and method is "ilp", an edgelist-based ILP solver will be used.
+    method : str
+        The method to be used. Valid options are "ilp" and "gc", where "gc" correponds to PUMA.
+        Default to "ilp".
+    period : float
+        The period of the phase.
+        Default to 2 * np.pi.
+    start_i : int
+        The index of the reference vertex to start unwrapping.
+        Default to 0.
+    kwargs : dict
+        Other arguments passed to the solver.
+    """
+```
+
+## Examples
+
+WIP.
 
 ## TODO
 
 - [ ] subgraph division
 - [ ] vertices-based weighting
-
 
 ## References
 
