@@ -93,7 +93,8 @@ def unwrap_arbitrary(
     simplices : Iterable[Iterable[int]] of length (N,)
         Each element is a list of vertices that form a simplex (a.k.a elementary cycle).
         The connections should be consistent with the edges.
-        If not provided and method is "ilp", an edgelist-based ILP solver will be used.
+        This is also used to compute automatic weights for each edge.
+        If not provided and method is "ilp", an edgelist-based ILP solver will be used without weighting.
     method : str
         The method to be used. Valid options are "ilp" and "gc", where "gc" correponds to PUMA.
         Default to "ilp".
@@ -115,7 +116,8 @@ WIP.
 ## TODO
 
 - [ ] subgraph division
-- [ ] vertices-based weighting
+- [ ] edges-based custom weighting
+- [ ] vertices-based custom weighting
 
 ## References
 
