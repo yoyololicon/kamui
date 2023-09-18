@@ -61,13 +61,19 @@ def unwrap_dimensional(
     ----------
     x : 2-D or 3-D np.ndarray
         The phase to be unwrapped.
-    start_pixel : the reference pixel to start unwrapping.
+    start_pixel : (2,) or (3,) tuple
+        the reference pixel to start unwrapping.
         Default to (0, 0) for 2-D data and (0, 0, 0) for 3-D data.
     use_edgelist : bool
         Whether to use the edgelist method.
         Default to False.
     kwargs : dict
         Other arguments passed to `kamui.unwrap_arbitrary`.
+
+    Returns
+    -------
+    np.ndarray
+        The unwrapped phase of the same shape as x.
     """
 ```
 
@@ -91,7 +97,7 @@ def unwrap_arbitrary(
     Parameters
     ----------
     psi : 1D np.ndarray of shape (P,)
-        The phase (vertices) to be unwrapped. 
+        The phase (vertices) to be unwrapped.
     edges : 2-D np.ndarray of shape (M, 2)
         The edges of the graph.
     simplices : Iterable[Iterable[int]] of length (N,)
@@ -110,6 +116,11 @@ def unwrap_arbitrary(
         Default to 0.
     kwargs : dict
         Other arguments passed to the solver.
+
+    Returns
+    -------
+    np.ndarray
+        The unwrapped phase of the same shape as psi.
     """
 ```
 
