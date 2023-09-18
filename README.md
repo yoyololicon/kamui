@@ -126,12 +126,12 @@ def unwrap_arbitrary(
 
 ## Examples
 
-WIP.
+- [Unwrapping on 2-D synthetic data](/examples/synthetic_images.ipynb)
 
 ## TODO
 
 - [ ] subgraph division
-- [ ] edges-based custom weighting
+- [x] edges-based custom weighting
 - [ ] vertices-based custom weighting
 
 ## References
