@@ -1,11 +1,15 @@
 import setuptools
+from pathlib import Path
+
+root_path = Path(__file__).parent
+version_file = root_path / "VERSION.txt"
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="kamui",
-    version="0.1.1.dev",
+    version="0.1.1",
     author="Chin-Yun Yu",
     author_email="chin-yun.yu@qmul.ac.uk",
     description="A Python package for phase unwrapping",
@@ -23,4 +27,12 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.6",
+    setuptools_git_versioning={
+        "enabled": True,
+        "version_file": version_file,
+        "count_commits_from_version_file": True,
+        "dev_template": "{tag}.{branch}{ccount}",
+        "dirty_template": "{tag}.{branch}{ccount}",
+    },
+    setup_requires=["setuptools-git-versioning<2"],
 )
