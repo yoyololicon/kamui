@@ -68,14 +68,28 @@ def get_2d_edges_and_simplices(
 
 
 def get_3d_edges_and_simplices(
-    shape: Tuple[int, int, int]
+    shape: Tuple[int, int, int], cyclical_axis: Union[int, Tuple[int, int]] = ()
 ) -> Tuple[np.ndarray, Iterable[Iterable[int]]]:
     nodes = np.arange(np.prod(shape)).reshape(shape)
+    if type(cyclical_axis) is int:
+        cyclical_axis = (cyclical_axis,)
+    cyclical_axis = tuple(filter(lambda ax: shape[ax] > 2, cyclical_axis))
+
     edges = np.concatenate(
         (
             np.stack([nodes[:, :-1, :].ravel(), nodes[:, 1:, :].ravel()], axis=1),
             np.stack([nodes[:-1, :, :].ravel(), nodes[1:, :, :].ravel()], axis=1),
             np.stack([nodes[:, :, :-1].ravel(), nodes[:, :, 1:].ravel()], axis=1),
+        )
+        + tuple(
+            np.stack(
+                [
+                    np.take(nodes, [0], axis=ax).ravel(),
+                    np.take(nodes, [-1], axis=ax).ravel(),
+                ],
+                axis=1,
+            )
+            for ax in cyclical_axis
         ),
         axis=0,
     )
@@ -83,32 +97,70 @@ def get_3d_edges_and_simplices(
         (
             np.stack(
                 (
-                    nodes[:-1, :-1, :-1].ravel(),
-                    nodes[1:, :-1, :-1].ravel(),
-                    nodes[1:, 1:, :-1].ravel(),
-                    nodes[:-1, 1:, :-1].ravel(),
+                    nodes[:-1, :-1, :].ravel(),
+                    nodes[1:, :-1, :].ravel(),
+                    nodes[1:, 1:, :].ravel(),
+                    nodes[:-1, 1:, :].ravel(),
                 ),
                 axis=1,
             ),
             np.stack(
                 (
-                    nodes[:-1, :-1, :-1].ravel(),
-                    nodes[:-1, 1:, :-1].ravel(),
-                    nodes[:-1, 1:, 1:].ravel(),
-                    nodes[:-1, :-1, 1:].ravel(),
+                    nodes[:, :-1, :-1].ravel(),
+                    nodes[:, 1:, :-1].ravel(),
+                    nodes[:, 1:, 1:].ravel(),
+                    nodes[:, :-1, 1:].ravel(),
                 ),
                 axis=1,
             ),
             np.stack(
                 (
-                    nodes[:-1, :-1, :-1].ravel(),
-                    nodes[:-1, :-1, 1:].ravel(),
-                    nodes[1:, :-1, 1:].ravel(),
-                    nodes[1:, :-1, :-1].ravel(),
+                    nodes[:-1, :, :-1].ravel(),
+                    nodes[:-1, :, 1:].ravel(),
+                    nodes[1:, :, 1:].ravel(),
+                    nodes[1:, :, :-1].ravel(),
                 ),
                 axis=1,
             ),
         ),
         axis=0,
     ).tolist()
+
+    if len(cyclical_axis) > 0:
+        simplices += np.concatenate(
+            sum(
+                (
+                    (
+                        np.stack(
+                            (
+                                x[1:, :].ravel(),
+                                y[1:, :].ravel(),
+                                y[:-1, :].ravel(),
+                                x[:-1, :].ravel(),
+                            ),
+                            axis=1,
+                        ),
+                        np.stack(
+                            (
+                                x[:, 1:].ravel(),
+                                y[:, 1:].ravel(),
+                                y[:, :-1].ravel(),
+                                x[:, :-1].ravel(),
+                            ),
+                            axis=1,
+                        ),
+                    )
+                    for x, y in [
+                        (
+                            np.squeeze(np.take(nodes, [0], axis=ax), axis=ax),
+                            np.squeeze(np.take(nodes, [-1], axis=ax), axis=ax),
+                        )
+                        for ax in cyclical_axis
+                    ]
+                ),
+                (),
+            ),
+            axis=0,
+        ).tolist()
+
     return edges, simplices
