@@ -7,6 +7,16 @@ __all__ = ["get_2d_edges_and_simplices", "get_3d_edges_and_simplices"]
 def get_2d_edges_and_simplices(
     shape: Tuple[int, int], cyclical_axis: Union[int, Tuple[int, int]] = ()
 ) -> Tuple[np.ndarray, Iterable[Iterable[int]]]:
+    """
+    Compute the edges and simplices for a 2D grid.
+
+    Args:
+        shape (Tuple[int, int]): The shape of the grid.
+        cyclical_axis (Union[int, Tuple[int, int]], optional): The axis/axes that should be treated as cyclical. Defaults to ().
+
+    Returns:
+        Tuple[np.ndarray, Iterable[Iterable[int]]]: A tuple containing the edges and simplices of the grid.
+    """
     nodes = np.arange(np.prod(shape)).reshape(shape)
     if type(cyclical_axis) is int:
         cyclical_axis = (cyclical_axis,)
@@ -70,6 +80,16 @@ def get_2d_edges_and_simplices(
 def get_3d_edges_and_simplices(
     shape: Tuple[int, int, int], cyclical_axis: Union[int, Tuple[int, int]] = ()
 ) -> Tuple[np.ndarray, Iterable[Iterable[int]]]:
+    """
+    Compute the edges and simplices for a 3D grid.
+
+    Args:
+        shape (Tuple[int, int, int]): The shape of the grid.
+        cyclical_axis (Union[int, Tuple[int, int]], optional): The axis/axes that should be treated as cyclical. Defaults to ().
+
+    Returns:
+        Tuple[np.ndarray, Iterable[Iterable[int]]]: A tuple containing the edges and simplices of the grid.
+    """
     nodes = np.arange(np.prod(shape)).reshape(shape)
     if type(cyclical_axis) is int:
         cyclical_axis = (cyclical_axis,)
