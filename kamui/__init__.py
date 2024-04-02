@@ -26,6 +26,7 @@ def unwrap_dimensional(
     x: np.ndarray,
     start_pixel: Optional[Union[Tuple[int, int], Tuple[int, int, int]]] = None,
     use_edgelist: bool = False,
+    cyclical_axis: Union[int, Tuple[int, int]] = (),
     **kwargs,
 ) -> np.ndarray:
     """
@@ -59,9 +60,13 @@ def unwrap_dimensional(
         start_i += s
 
     if x.ndim == 2:
-        edges, simplices = get_2d_edges_and_simplices(x.shape)
+        edges, simplices = get_2d_edges_and_simplices(
+            x.shape, cyclical_axis=cyclical_axis
+        )
     elif x.ndim == 3:
-        edges, simplices = get_3d_edges_and_simplices(x.shape)
+        edges, simplices = get_3d_edges_and_simplices(
+            x.shape, cyclical_axis=cyclical_axis
+        )
     else:
         raise ValueError("x must be 2D or 3D")
     psi = x.ravel()
