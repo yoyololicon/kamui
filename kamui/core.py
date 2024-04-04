@@ -185,11 +185,8 @@ def puma(psi: np.ndarray, edges: np.ndarray, max_jump: int = 1, p: float = 1):
 
     prev_Ek = cal_Ek(K, psi, edges[:, 0], edges[:, 1])
 
-    energy_list = []
-
     for step in jump_steps:
         while 1:
-            energy_list.append(prev_Ek)
             G = maxflow.Graph[float]()
             G.add_nodes(total_nodes)
 
@@ -205,12 +202,14 @@ def puma(psi: np.ndarray, edges: np.ndarray, max_jump: int = 1, p: float = 1):
 
             tmp_st_weight = np.zeros((2, total_nodes))
 
-            for i in range(edges.shape[0]):
+            for i, a in enumerate(e10 - e00):
                 u, v = edges[i]
-                tmp_st_weight[0, u] += max(0, e10[i] - e00[i])
-                tmp_st_weight[0, v] += max(0, e11[i] - e10[i])
-                tmp_st_weight[1, u] -= min(0, e10[i] - e00[i])
-                tmp_st_weight[1, v] -= min(0, e11[i] - e10[i])
+                if a > 0:
+                    tmp_st_weight[0, u] += a
+                    tmp_st_weight[1, v] += a
+                else:
+                    tmp_st_weight[1, u] -= a
+                    tmp_st_weight[0, v] -= a
 
             for i in range(total_nodes):
                 G.add_tedge(i, tmp_st_weight[0, i], tmp_st_weight[1, i])
