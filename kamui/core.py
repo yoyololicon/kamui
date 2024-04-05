@@ -203,18 +203,13 @@ def puma(psi: np.ndarray, edges: np.ndarray, max_jump: int = 1, p: float = 1):
             a = e10 - e00
             flip_mask = a < 0
             tmp_st_weight = np.zeros((2, total_nodes))
-            flip_index = np.stack((flip_mask.astype(np.int), 1 - flip_mask.astype(np.int)), axis=1)
+            flip_index = np.stack(
+                (flip_mask.astype(int), 1 - flip_mask.astype(int)), axis=1
+            )
             positive_a = np.where(flip_mask, -a, a)
-            np.add.at(tmp_st_weight, (flip_index.ravel(), edges.ravel()), positive_a.repeat(2))
-
-            # for i, a in enumerate(e10 - e00):
-            #     u, v = edges[i]
-            #     if a > 0:
-            #         tmp_st_weight[0, u] += a
-            #         tmp_st_weight[1, v] += a
-            #     else:
-            #         tmp_st_weight[1, u] -= a
-            #         tmp_st_weight[0, v] -= a
+            np.add.at(
+                tmp_st_weight, (flip_index.ravel(), edges.ravel()), positive_a.repeat(2)
+            )
 
             for i in range(total_nodes):
                 G.add_tedge(i, tmp_st_weight[0, i], tmp_st_weight[1, i])
