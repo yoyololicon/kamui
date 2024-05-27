@@ -101,7 +101,7 @@ def calculate_k(
         else:
             c = np.ones((M * 2,), dtype=np.int64)
     else:
-        c = np.tile(c, 2)
+        c = np.tile(weights, 2)
 
     res = linprog(c, A_eq=A_eq, b_eq=b_eq, integrality=1)
     k = res.x[:M] - res.x[M:]
