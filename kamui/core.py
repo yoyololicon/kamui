@@ -104,12 +104,10 @@ def calculate_k(
         c = np.tile(weights, 2)
 
     res = linprog(c, A_eq=A_eq, b_eq=b_eq, integrality=1)
+    if res.x is None:
+        return None
     k = res.x[:M] - res.x[M:]
     k = k.astype(np.int64)
-    cost = np.abs(V @ k + y).sum()
-    if cost > 0:
-        print(f"Warning: no solution found.")
-        return None
     return k
 
 
