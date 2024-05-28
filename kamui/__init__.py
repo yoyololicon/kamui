@@ -42,6 +42,9 @@ def unwrap_dimensional(
     use_edgelist : bool
         Whether to use the edgelist method.
         Default to False.
+    cyclical_axis : int or (int, int)
+        The axis that is cyclical.
+        Default to ().
     kwargs : dict
         Other arguments passed to `kamui.unwrap_arbitrary`.
 
