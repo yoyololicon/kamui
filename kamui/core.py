@@ -4,6 +4,9 @@ from scipy.optimize import linprog
 import numpy as np
 from typing import Optional, Iterable
 
+from .utils import prepare_weights
+
+
 try:
     import maxflow
 except ImportError:
@@ -101,6 +104,7 @@ def calculate_k(
         else:
             c = np.ones((M * 2,), dtype=np.int64)
     else:
+        weights = prepare_weights(weights, edges=edges)
         c = np.tile(weights, 2)
 
     res = linprog(c, A_eq=A_eq, b_eq=b_eq, integrality=1)
@@ -144,6 +148,8 @@ def calculate_m(
     )
     if weights is None:
         weights = np.ones((M,), dtype=np.int64)
+    else:
+        weights = prepare_weights(weights, edges=edges)
 
     c = np.concatenate((np.zeros(N, dtype=np.int64), weights, weights))
 
