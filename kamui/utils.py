@@ -197,22 +197,23 @@ def get_3d_edges_and_simplices(
     return edges, simplices
 
 
-def prepare_weights(weights: npt.NDArray, edges: npt.NDArray[np.int_], smoothing: float = 0.1
-                    ) -> npt.NDArray[np.float_]:
+def prepare_weights(weights: npt.NDArray, edges: npt.NDArray[np.int_], smoothing: float = 0.1,
+                    merging_method: str = 'mean') -> npt.NDArray[np.float_]:
     """Prepare weights for `calculate_m` and `calculate_k` functions.
 
     Assume the weights are the same shape as the phases to be unwrapped.
 
     Scale the weights from 0 to 1. Pick the weights corresponding to the phase pairs connected by the edges.
-    Compute the mean of each of those pair to give a weight for each edge.
+    Compute the mean/max/min (depending on the `merging_method`) of each of those pairs to give a weight for each edge.
 
     Args:
-        weights     :   Array of weights of shapr corresponding to the original phases array shape.
-        edges       :   Edges connecting the phases. Shape: (N, 2), where N is the number of edges.
-        smoothing   :   A positive value between 0 (inclusive) and 1 (not inclusive). This is the minimal value
-                        of the rescaled weights where they are defined. If smoothing > 0, the value of 0 is reserved
-                        for places where the weights are originally NaN. If smoothing == 0, 0 will be used for both
-                        NaN weights and smallest non-NaN ones.
+        weights         :   Array of weights of shapr corresponding to the original phases array shape.
+        edges           :   Edges connecting the phases. Shape: (N, 2), where N is the number of edges.
+        smoothing       :   A positive value between 0 (inclusive) and 1 (not inclusive). This is the minimal value
+                            of the rescaled weights where they are defined. If smoothing > 0, the value of 0 is reserved
+                            for places where the weights are originally NaN. If smoothing == 0, 0 will be used for both
+                            NaN weights and smallest non-NaN ones.
+        merging_method  :   Way of combining two phase weights into a single edge weight.
 
     Returns:
         Array of weights for the edges, shape: (N,). Rescaled to (0, 1).
@@ -229,8 +230,12 @@ def prepare_weights(weights: npt.NDArray, edges: npt.NDArray[np.int_], smoothing
     weights += smoothing
 
     # pick the weights corresponding to the phases connected by the edges
-    # and compute means to get one weight for each edge
-    weights_for_edges = np.mean(weights.ravel()[edges], axis=1)
+    # and use `merging_method` to get one weight for each edge
+    allowed_merging_methods = ['min', 'max', 'mean']
+    if merging_method not in allowed_merging_methods:
+        raise ValueError(
+            "`merging_method` should be one of: " + ', '.join(merging_method) + '; got ' + str(merging_method))
+    weights_for_edges = getattr(np, merging_method)(weights.ravel()[edges], axis=1)
 
     # make sure there are no NaNs in the weights; replace any with 0s
     weights_for_edges[np.isnan(weights_for_edges)] = 0
