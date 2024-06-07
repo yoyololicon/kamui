@@ -1,8 +1,8 @@
 import numpy as np
 import numpy.typing as npt
-from typing import Tuple, Optional, Iterable, Union
+from typing import Tuple, Iterable, Union
 
-__all__ = ["get_2d_edges_and_simplices", "get_3d_edges_and_simplices"]
+__all__ = ["get_2d_edges_and_simplices", "get_3d_edges_and_simplices", "prepare_weights"]
 
 
 def get_2d_edges_and_simplices(

@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Tuple, Optional, Iterable, Union
+from typing import Tuple, Optional, Iterable, Union, Any
 
 from .core import *
 from .utils import *
@@ -27,8 +27,9 @@ def unwrap_dimensional(
     start_pixel: Optional[Union[Tuple[int, int], Tuple[int, int, int]]] = None,
     use_edgelist: bool = False,
     cyclical_axis: Union[int, Tuple[int, int]] = (),
-    **kwargs,
-) -> np.ndarray:
+    merging_method: str = 'mean',
+    **kwargs: Any,
+) -> Optional[np.ndarray]:
     """
     Unwrap the phase of a 2-D or 3-D array.
 
@@ -45,6 +46,7 @@ def unwrap_dimensional(
     cyclical_axis : int or (int, int)
         The axis that is cyclical.
         Default to ().
+    merging_method  : Way of combining two phase weights into a single edge weight.
     kwargs : dict
         Other arguments passed to `kamui.unwrap_arbitrary`.
 
@@ -73,6 +75,10 @@ def unwrap_dimensional(
     else:
         raise ValueError("x must be 2D or 3D")
     psi = x.ravel()
+
+    weights = kwargs.pop('weights', None)
+    if weights is not None:
+        kwargs['weights'] = prepare_weights(weights, edges=edges, merging_method=merging_method)
 
     result = unwrap_arbitrary(
         psi, edges, None if use_edgelist else simplices, start_i=start_i, **kwargs

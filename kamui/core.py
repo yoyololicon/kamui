@@ -4,8 +4,6 @@ from scipy.optimize import linprog
 import numpy as np
 from typing import Optional, Iterable
 
-from .utils import prepare_weights
-
 
 try:
     import maxflow
@@ -43,7 +41,6 @@ def calculate_k(
     differences: np.ndarray,
     weights: Optional[np.ndarray] = None,
     adaptive_weighting: bool = True,
-    merging_method: str = 'mean'
 ) -> Optional[np.ndarray]:
     """
     Args:
@@ -52,7 +49,6 @@ def calculate_k(
         differences: (M,) array of differences, could be float or int
         weights: (M,) array of weights
         adaptive_weighting: whether to use adaptive weighting
-        merging_method: how to combine phase weights to yield edge weight
     """
 
     M, N = edges.shape[0], len(simplices)
@@ -106,7 +102,6 @@ def calculate_k(
         else:
             c = np.ones((M * 2,), dtype=np.int64)
     else:
-        weights = prepare_weights(weights, edges=edges, merging_method=merging_method)
         c = np.tile(weights, 2)
 
     res = linprog(c, A_eq=A_eq, b_eq=b_eq, integrality=1)
@@ -121,14 +116,12 @@ def calculate_m(
     edges: np.ndarray,
     differences: np.ndarray,
     weights: Optional[np.ndarray] = None,
-    merging_method: str = 'mean'
 ) -> Optional[np.ndarray]:
     """
     Args:
         edges: (M, 2) array of edges
         differences: (M,) quantised array of differences, must be int
         weights: (M,) array of weights
-        merging_method: how to combine phase weights to yield edge weight
     """
     assert differences.dtype == np.int64, "differences must be int"
     M = edges.shape[0]
@@ -152,8 +145,6 @@ def calculate_m(
     )
     if weights is None:
         weights = np.ones((M,), dtype=np.int64)
-    else:
-        weights = prepare_weights(weights, edges=edges, merging_method=merging_method)
 
     c = np.concatenate((np.zeros(N, dtype=np.int64), weights, weights))
 
