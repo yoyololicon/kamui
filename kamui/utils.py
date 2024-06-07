@@ -208,15 +208,15 @@ def prepare_weights(weights: npt.NDArray, edges: npt.NDArray[np.int_], smoothing
 
     Args:
         weights         :   Array of weights of shapr corresponding to the original phases array shape.
-        edges           :   Edges connecting the phases. Shape: (N, 2), where N is the number of edges.
-        smoothing       :   A positive value between 0 (inclusive) and 1 (not inclusive). This is the minimal value
-                            of the rescaled weights where they are defined. If smoothing > 0, the value of 0 is reserved
-                            for places where the weights are originally NaN. If smoothing == 0, 0 will be used for both
-                            NaN weights and smallest non-NaN ones.
+        edges           :   Edges connecting the phases. Shape: (M, 2), where M is the number of edges.
+        smoothing       :   A positive value in range [0, 1). This is the minimal value of the rescaled weights
+                            where they are defined. If smoothing > 0, the value of 0 is reserved for places where
+                            the weights are originally NaN. If smoothing == 0, 0 will be used for both NaN weights
+                            and smallest non-NaN ones.
         merging_method  :   Way of combining two phase weights into a single edge weight.
 
     Returns:
-        Array of weights for the edges, shape: (N,). Rescaled to (0, 1).
+        Array of weights for the edges, shape: (M,). Rescaled to [0, 1].
     """
 
     if not 0 <= smoothing < 1:
