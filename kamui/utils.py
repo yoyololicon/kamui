@@ -225,9 +225,14 @@ def prepare_weights(weights: npt.NDArray, edges: npt.NDArray[np.int_], smoothing
 
     # scale the weights from 0 to 1
     weights = weights - np.nanmin(weights)
-    weights /= np.nanmax(weights)
-    weights *= (1 - smoothing)
-    weights += smoothing
+    current_max = np.nanmax(weights)
+    if not current_max:
+        # current maximum is 0, which means all weights originally had the same value, now 0; replace everything with 1
+        weights += 1
+    else:
+        weights /= current_max
+        weights *= (1 - smoothing)
+        weights += smoothing
 
     # pick the weights corresponding to the phases connected by the edges
     # and use `merging_method` to get one weight for each edge
