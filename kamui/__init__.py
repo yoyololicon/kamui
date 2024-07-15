@@ -27,7 +27,7 @@ def unwrap_dimensional(
     start_pixel: Optional[Union[Tuple[int, int], Tuple[int, int, int]]] = None,
     use_edgelist: bool = False,
     cyclical_axis: Union[int, Tuple[int, int]] = (),
-    merging_method: str = 'mean',
+    merging_method: str = "mean",
     weights: Optional[np.ndarray] = None,
     **kwargs: Any,
 ) -> Optional[np.ndarray]:
@@ -65,7 +65,6 @@ def unwrap_dimensional(
     for i, s in enumerate(start_pixel):
         start_i *= x.shape[i]
         start_i += s
-
     if x.ndim == 2:
         edges, simplices = get_2d_edges_and_simplices(
             x.shape, cyclical_axis=cyclical_axis
@@ -80,14 +79,18 @@ def unwrap_dimensional(
 
     if weights is not None:
         # convert per-vertex weights to per-edge weights
-        weights = prepare_weights(weights, edges=edges, merging_method=merging_method)
 
+        weights = prepare_weights(weights, edges=edges, merging_method=merging_method)
     result = unwrap_arbitrary(
-        psi, edges, None if use_edgelist else simplices, start_i=start_i, weights=weights, **kwargs
+        psi,
+        edges,
+        None if use_edgelist else simplices,
+        start_i=start_i,
+        weights=weights,
+        **kwargs,
     )
     if result is None:
         return None
-
     return result.reshape(x.shape)
 
 
@@ -147,7 +150,7 @@ def unwrap_arbitrary(
                     np.int64
                 ),
                 weights=weights,
-                **kwargs
+                **kwargs,
             )
             if m is None:
                 return None
