@@ -28,6 +28,7 @@ def unwrap_dimensional(
     use_edgelist: bool = False,
     cyclical_axis: Union[int, Tuple[int, int]] = (),
     merging_method: str = 'mean',
+    weights: Optional[np.ndarray] = None,
     **kwargs: Any,
 ) -> Optional[np.ndarray]:
     """
@@ -46,6 +47,7 @@ def unwrap_dimensional(
     cyclical_axis : int or (int, int)
         The axis that is cyclical.
         Default to ().
+    weights :   Weights defining the 'goodness' of value at each vertex. Shape must match the shape of x.
     merging_method  : Way of combining two phase weights into a single edge weight.
     kwargs : dict
         Other arguments passed to `kamui.unwrap_arbitrary`.
@@ -76,12 +78,12 @@ def unwrap_dimensional(
         raise ValueError("x must be 2D or 3D")
     psi = x.ravel()
 
-    weights = kwargs.pop('weights', None)
     if weights is not None:
-        kwargs['weights'] = prepare_weights(weights, edges=edges, merging_method=merging_method)
+        # convert per-vertex weights to per-edge weights
+        weights = prepare_weights(weights, edges=edges, merging_method=merging_method)
 
     result = unwrap_arbitrary(
-        psi, edges, None if use_edgelist else simplices, start_i=start_i, **kwargs
+        psi, edges, None if use_edgelist else simplices, start_i=start_i, weights=weights, **kwargs
     )
     if result is None:
         return None
@@ -96,6 +98,7 @@ def unwrap_arbitrary(
     method: str = "ilp",
     period: float = 2 * np.pi,
     start_i: int = 0,
+    weights: Optional[np.ndarray] = None,
     **kwargs,
 ) -> Optional[np.ndarray]:
     """
@@ -121,6 +124,7 @@ def unwrap_arbitrary(
     start_i : int
         The index of the reference vertex to start unwrapping.
         Default to 0.
+    weights :   Array of weights for each of the edges.
     kwargs : dict
         Other arguments passed to the solver.
 
@@ -130,6 +134,8 @@ def unwrap_arbitrary(
         The unwrapped phase of the same shape as psi.
     """
     if method == "gc":
+        if weights is not None:
+            raise ValueError("PUMA method does not take in weights")
         m = puma(psi / period, edges, **kwargs)
         m -= m[start_i]
         result = m * period + psi
@@ -140,7 +146,8 @@ def unwrap_arbitrary(
                 np.round((psi[edges[:, 1]] - psi[edges[:, 0]]) / period).astype(
                     np.int64
                 ),
-                **kwargs,
+                weights=weights,
+                **kwargs
             )
             if m is None:
                 return None
@@ -148,7 +155,7 @@ def unwrap_arbitrary(
             result = m * period + psi
         else:
             diff = wrap_difference(psi[edges[:, 1]] - psi[edges[:, 0]], period)
-            k = calculate_k(edges, simplices, diff / period, **kwargs)
+            k = calculate_k(edges, simplices, diff / period, weights=weights, **kwargs)
             correct_diff = diff + k * period
 
             result = (
