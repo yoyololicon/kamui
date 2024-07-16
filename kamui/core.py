@@ -4,11 +4,11 @@ from scipy.optimize import linprog
 import numpy as np
 from typing import Optional, Iterable
 
+
 try:
     import maxflow
 except ImportError:
     print("PyMaxflow not found, some functions will not be available.")
-
 __all__ = ["integrate", "calculate_k", "calculate_m", "puma"]
 
 
@@ -30,7 +30,6 @@ def integrate(edges: np.ndarray, weights: np.ndarray, start_i: int = 0):
     pairs = np.stack([nodes[:-1], nodes[1:]], axis=1)
     for u, v in pairs:
         result[v] = result[u] + G[u, v]
-
     return result
 
 
@@ -73,7 +72,6 @@ def calculate_k(
                     raise ValueError("simplices contain invalid edges")
                 vals.append(-1)
             u = v
-
     rows = np.array(rows)
     cols = np.array(cols)
     vals = np.array(vals)
@@ -102,7 +100,6 @@ def calculate_k(
             c = np.ones((M * 2,), dtype=np.int64)
     else:
         c = np.tile(weights, 2)
-
     res = linprog(c, A_eq=A_eq, b_eq=b_eq, integrality=1)
     if res.x is None:
         return None
@@ -144,7 +141,6 @@ def calculate_m(
     )
     if weights is None:
         weights = np.ones((M,), dtype=np.int64)
-
     c = np.concatenate((np.zeros(N, dtype=np.int64), weights, weights))
 
     b_eq = differences
@@ -170,7 +166,6 @@ def puma(psi: np.ndarray, edges: np.ndarray, max_jump: int = 1, p: float = 1):
         jump_steps = list(range(1, max_jump + 1)) * 2
     else:
         jump_steps = [max_jump]
-
     total_nodes = psi.size
 
     def V(x):
@@ -211,7 +206,6 @@ def puma(psi: np.ndarray, edges: np.ndarray, max_jump: int = 1, p: float = 1):
 
             for i in range(total_nodes):
                 G.add_tedge(i, tmp_st_weight[0, i], tmp_st_weight[1, i])
-
             G.maxflow()
 
             partition = G.get_grid_segments(np.arange(total_nodes))
@@ -224,5 +218,4 @@ def puma(psi: np.ndarray, edges: np.ndarray, max_jump: int = 1, p: float = 1):
             else:
                 K[~partition] -= step
                 break
-
     return K

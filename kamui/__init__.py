@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Tuple, Optional, Iterable, Union
+from typing import Tuple, Optional, Iterable, Union, Any
 
 from .core import *
 from .utils import *
@@ -27,8 +27,10 @@ def unwrap_dimensional(
     start_pixel: Optional[Union[Tuple[int, int], Tuple[int, int, int]]] = None,
     use_edgelist: bool = False,
     cyclical_axis: Union[int, Tuple[int, int]] = (),
-    **kwargs,
-) -> np.ndarray:
+    merging_method: str = "mean",
+    weights: Optional[np.ndarray] = None,
+    **kwargs: Any,
+) -> Optional[np.ndarray]:
     """
     Unwrap the phase of a 2-D or 3-D array.
 
@@ -45,6 +47,8 @@ def unwrap_dimensional(
     cyclical_axis : int or (int, int)
         The axis that is cyclical.
         Default to ().
+    weights : Weights defining the 'goodness' of value at each vertex. Shape must match the shape of x.
+    merging_method : Way of combining two phase weights into a single edge weight.
     kwargs : dict
         Other arguments passed to `kamui.unwrap_arbitrary`.
 
@@ -61,7 +65,6 @@ def unwrap_dimensional(
     for i, s in enumerate(start_pixel):
         start_i *= x.shape[i]
         start_i += s
-
     if x.ndim == 2:
         edges, simplices = get_2d_edges_and_simplices(
             x.shape, cyclical_axis=cyclical_axis
@@ -74,12 +77,20 @@ def unwrap_dimensional(
         raise ValueError("x must be 2D or 3D")
     psi = x.ravel()
 
+    if weights is not None:
+        # convert per-vertex weights to per-edge weights
+
+        weights = prepare_weights(weights, edges=edges, merging_method=merging_method)
     result = unwrap_arbitrary(
-        psi, edges, None if use_edgelist else simplices, start_i=start_i, **kwargs
+        psi,
+        edges,
+        None if use_edgelist else simplices,
+        start_i=start_i,
+        weights=weights,
+        **kwargs,
     )
     if result is None:
         return None
-
     return result.reshape(x.shape)
 
 
