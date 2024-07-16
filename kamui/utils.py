@@ -213,7 +213,7 @@ def prepare_weights(
     Compute the mean/max/min (depending on the `merging_method`) of each of those pairs to give a weight for each edge.
 
     Args:
-        weights         :   Array of weights of shapr corresponding to the original phases array shape.
+        weights         :   Array of weights of shape corresponding to the original phases array shape.
         edges           :   Edges connecting the phases. Shape: (M, 2), where M is the number of edges.
         smoothing       :   A positive value in range [0, 1). This is the minimal value of the rescaled weights
                             where they are defined. If smoothing > 0, the value of 0 is reserved for places where
