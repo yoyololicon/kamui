@@ -48,7 +48,7 @@ def unwrap_dimensional(
         The axis that is cyclical.
         Default to ().
     weights : Weights defining the 'goodness' of value at each vertex. Shape must match the shape of x.
-    merging_method  : Way of combining two phase weights into a single edge weight.
+    merging_method : Way of combining two phase weights into a single edge weight.
     kwargs : dict
         Other arguments passed to `kamui.unwrap_arbitrary`.
 
