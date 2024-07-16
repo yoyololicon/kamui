@@ -135,8 +135,6 @@ def unwrap_arbitrary(
         The unwrapped phase of the same shape as psi.
     """
     if method == "gc":
-        if weights is not None:
-            raise ValueError("PUMA method does not take in weights")
         m = puma(psi / period, edges, **kwargs)
         m -= m[start_i]
         result = m * period + psi
