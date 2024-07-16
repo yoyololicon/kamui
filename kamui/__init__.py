@@ -153,7 +153,7 @@ def unwrap_arbitrary(
             result = m * period + psi
         else:
             diff = wrap_difference(psi[edges[:, 1]] - psi[edges[:, 0]], period)
-            k = calculate_k(edges, simplices, diff / period, weights=weights, **kwargs)
+            k = calculate_k(edges, simplices, diff / period, **kwargs)
             correct_diff = diff + k * period
 
             result = (
