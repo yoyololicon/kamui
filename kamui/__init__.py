@@ -126,7 +126,6 @@ def unwrap_arbitrary(
     start_i : int
         The index of the reference vertex to start unwrapping.
         Default to 0.
-    weights :   Array of weights for each of the edges.
     kwargs : dict
         Other arguments passed to the solver.
 
