@@ -101,7 +101,6 @@ def unwrap_arbitrary(
     method: str = "ilp",
     period: float = 2 * np.pi,
     start_i: int = 0,
-    weights: Optional[np.ndarray] = None,
     **kwargs,
 ) -> Optional[np.ndarray]:
     """
