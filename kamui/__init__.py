@@ -145,7 +145,6 @@ def unwrap_arbitrary(
                 np.round((psi[edges[:, 1]] - psi[edges[:, 0]]) / period).astype(
                     np.int64
                 ),
-                weights=weights,
                 **kwargs,
             )
             if m is None:
