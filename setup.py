@@ -33,5 +33,5 @@ setuptools.setup(
         "dev_template": "{tag}.{branch}{ccount}",
         "dirty_template": "{tag}.{branch}{ccount}",
     },
-    setup_requires=["setuptools-git-versioning<2"],
+    setup_requires=["setuptools-git-versioning>=2,<3"],
 )
