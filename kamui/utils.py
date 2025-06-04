@@ -204,7 +204,7 @@ def prepare_weights(
     edges: npt.NDArray[np.int_],
     smoothing: float = 0.1,
     merging_method: str = "mean",
-) -> npt.NDArray[np.float_]:
+) -> npt.NDArray[np.floating]:
     """Prepare weights for `calculate_m` and `calculate_k` functions.
 
     Assume the weights are the same shape as the phases to be unwrapped.
